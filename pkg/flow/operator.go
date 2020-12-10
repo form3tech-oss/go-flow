@@ -2,6 +2,7 @@ package flow
 
 import (
 	"context"
+
 	"github.com/form3tech-oss/go-flow/pkg/option"
 	"github.com/form3tech-oss/go-flow/pkg/stream"
 )
@@ -11,10 +12,10 @@ type Operator interface {
 }
 
 type operatorFlow struct {
-	source   stream.Source
-	operator Operator
-	input chan stream.Element
-	output chan stream.Element
+	source    stream.Source
+	operator  Operator
+	input     chan stream.Element
+	output    chan stream.Element
 	diversion stream.Sink
 	divert    stream.Predicate
 }
@@ -48,7 +49,7 @@ func (o *operatorFlow) Run(ctx context.Context) {
 	o.source.Run(ctx)
 	go func() {
 		defer o.closeOutputs()
-		for  o.input != nil {
+		for o.input != nil {
 			select {
 			case <-ctx.Done():
 				return
@@ -78,11 +79,10 @@ func (o *operatorFlow) closeOutputs() {
 	}
 }
 
-
-func FromOperator(operator Operator, options ... option.Option) stream.Flow {
+func FromOperator(operator Operator, options ...option.Option) stream.Flow {
 	return &operatorFlow{
 		operator: operator,
-		input: option.CreateChannel(options ...),
+		input:    option.CreateChannel(options...),
 		divert: func(element stream.Element) bool {
 			return false
 		},

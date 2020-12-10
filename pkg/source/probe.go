@@ -29,12 +29,12 @@ func (t *ProbeSource) Run(ctx context.Context) {
 	t.ctx = ctx
 }
 
-func (t *ProbeSource) SendAndComplete(items ... interface{}) {
-	t.Send(items ...)
+func (t *ProbeSource) SendAndComplete(items ...interface{}) {
+	t.Send(items...)
 	t.Complete()
 }
 
-func (t *ProbeSource) Send(items ... interface{}) {
+func (t *ProbeSource) Send(items ...interface{}) {
 	for _, item := range items {
 		t.output <- stream.Value(item)
 	}
@@ -46,6 +46,6 @@ func (t *ProbeSource) Complete() {
 
 func Probe() *ProbeSource {
 	return &ProbeSource{
-		ctx:    context.Background(),
+		ctx: context.Background(),
 	}
 }

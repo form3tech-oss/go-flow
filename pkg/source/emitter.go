@@ -2,6 +2,7 @@ package source
 
 import (
 	"context"
+
 	"github.com/form3tech-oss/go-flow/pkg/stream"
 )
 

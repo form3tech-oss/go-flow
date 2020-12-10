@@ -11,7 +11,7 @@ type mappingOperator struct {
 	mapper Mapper
 }
 
-func (m *mappingOperator) apply(element stream.Element) (stream.Element, bool){
+func (m *mappingOperator) apply(element stream.Element) (stream.Element, bool) {
 	mappedElement := m.mapper(element)
 	return mappedElement, true
 }

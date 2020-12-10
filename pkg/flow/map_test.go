@@ -44,13 +44,13 @@ func TestMappingOperator_WithDiversion(t *testing.T) {
 	}
 
 	whenGreaterThan10 := func(element stream.Element) bool {
-		return  element.Value.(int) > 5
+		return element.Value.(int) > 5
 	}
 
 	sourceProbe.Via(Map(mapping)).DivertTo(divertProbe, whenGreaterThan10).To(terminationProbe).Run(context.Background())
 
 	go func() {
-		sourceProbe.SendAndComplete(1,2,3,4,5,6,7,8,9,10)
+		sourceProbe.SendAndComplete(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 	}()
 
 	terminationProbe.Request(2, 10*time.Second)
