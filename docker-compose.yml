@@ -1,0 +1,9 @@
+version: '2'
+services:
+  postgresql:
+    image: 288840537196.dkr.ecr.eu-west-1.amazonaws.com/tech.form3/postgres:develop
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
