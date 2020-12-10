@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/form3tech-oss/go-flow/pkg/stream/option"
-	"github.com/form3tech-oss/go-flow/pkg/stream/sink"
+	"github.com/form3tech-oss/go-flow/pkg/option"
+	"github.com/form3tech-oss/go-flow/pkg/sink"
 	"go.uber.org/goleak"
 )
 

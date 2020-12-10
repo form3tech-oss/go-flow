@@ -22,5 +22,3 @@ type Flow interface {
 type Runnable interface {
 	Run(ctx context.Context)
 }
-
-// https://blog.yoshuawuyts.com/rust-streams/

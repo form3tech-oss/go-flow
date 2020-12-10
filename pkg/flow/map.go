@@ -3,8 +3,8 @@ package flow
 import (
 	"context"
 
+	"github.com/form3tech-oss/go-flow/pkg/option"
 	"github.com/form3tech-oss/go-flow/pkg/stream"
-	"github.com/form3tech-oss/go-flow/pkg/stream/option"
 )
 
 type Mapper func(from stream.Element) stream.Element
