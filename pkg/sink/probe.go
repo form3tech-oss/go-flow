@@ -29,7 +29,10 @@ func (p *probeSink) WireSourceToSink(source stream.Source) stream.Runnable {
 }
 
 func (p *probeSink) Run(ctx context.Context) {
-	p.source.Run(ctx)
+	if p.source != nil {
+		p.source.Run(ctx)
+	}
+
 	p.ctx = ctx
 }
 

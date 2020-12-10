@@ -8,6 +8,7 @@ type Source interface {
 	Via(flow Flow) Source
 	To(sink Sink) Runnable
 	DivertTo(sink Sink, when Predicate) Source
+	AlsoTo(sink Sink) Source
 	Runnable
 }
 
@@ -21,6 +22,7 @@ type Flow interface {
 	Input() chan Element
 	WireSourceToFlow(source Source) Source
 	DivertTo(sink Sink, when Predicate) Source
+	AlsoTo(sink Sink) Source
 	Source
 }
 

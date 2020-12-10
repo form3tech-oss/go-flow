@@ -18,6 +18,13 @@ type operatorFlow struct {
 	output    chan stream.Element
 	diversion stream.Sink
 	divert    stream.Predicate
+	alsoTo stream.Sink
+}
+
+
+func (o *operatorFlow) AlsoTo(sink stream.Sink) stream.Source {
+	o.alsoTo = sink
+	return o
 }
 
 func (o *operatorFlow) Input() chan stream.Element {
@@ -46,7 +53,7 @@ func (o *operatorFlow) To(sink stream.Sink) stream.Runnable {
 }
 
 func (o *operatorFlow) Run(ctx context.Context) {
-	o.source.Run(ctx)
+	o.runAttachedStages(ctx)
 	go func() {
 		defer o.closeOutputs()
 		for o.input != nil {
@@ -63,6 +70,9 @@ func (o *operatorFlow) Run(ctx context.Context) {
 						o.diversion.Input() <- resultElement
 					} else {
 						o.output <- resultElement
+						if o.alsoTo != nil {
+							o.alsoTo.Input() <- resultElement
+						}
 					}
 				}
 			default:
@@ -72,10 +82,25 @@ func (o *operatorFlow) Run(ctx context.Context) {
 	}()
 }
 
+func (o *operatorFlow) runAttachedStages(ctx context.Context) {
+	if o.source != nil {
+		o.source.Run(ctx)
+	}
+	if o.diversion != nil {
+		o.diversion.Run(ctx)
+	}
+	if o.alsoTo != nil {
+		o.alsoTo.Run(ctx)
+	}
+}
+
 func (o *operatorFlow) closeOutputs() {
 	close(o.output)
 	if o.diversion != nil {
 		close(o.diversion.Input())
+	}
+	if o.alsoTo != nil {
+		close(o.alsoTo.Input())
 	}
 }
 

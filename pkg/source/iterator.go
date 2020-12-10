@@ -16,6 +16,12 @@ type iteratorSource struct {
 	output    chan stream.Element
 	diversion stream.Sink
 	divert    stream.Predicate
+	alsoTo    stream.Sink
+}
+
+func (i *iteratorSource) AlsoTo(sink stream.Sink) stream.Source {
+	i.alsoTo = sink
+	return i
 }
 
 func (i *iteratorSource) Via(flow stream.Flow) stream.Source {
@@ -51,6 +57,15 @@ func (i *iteratorSource) Run(ctx context.Context) {
 			}
 		}
 	}()
+}
+
+func (i *iteratorSource) runAttachedStages(ctx context.Context) {
+	if i.diversion != nil {
+		i.diversion.Run(ctx)
+	}
+	if i.alsoTo != nil {
+		i.alsoTo.Run(ctx)
+	}
 }
 
 func (i *iteratorSource) closeOutputs() {

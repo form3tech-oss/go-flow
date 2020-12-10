@@ -11,6 +11,10 @@ type ProbeSource struct {
 	ctx    context.Context
 }
 
+func (t *ProbeSource) AlsoTo(sink stream.Sink) stream.Source {
+	panic("implement me")
+}
+
 func (t *ProbeSource) DivertTo(sink stream.Sink, when stream.Predicate) stream.Source {
 	panic("implement me")
 }
