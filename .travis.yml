@@ -1,0 +1,53 @@
+language: go
+git:
+  depth: false
+go:
+- 1.14
+services: docker
+before_script:
+- pip install --user awscli
+- export PATH=$PATH:$HOME/.local/bin
+- export REPO=$TRAVIS_REPO_SLUG
+if: tag IS blank
+env:
+  global:
+  - AWS_REGION=eu-west-1
+  - secure: rMafrXLBBxsHJluQJcfiquTrQwBiQkL6VTbuppZTSGkPuu7/ffgDJ15Jy7saiwLF4BoK4Jb/wJXwcb7BKxUVFZPfnOztEGWOkBGziOV0JhWwyGFslIaMcC2MLm3DC7ljtv/vMrBlk6gdslzliA7FRee+5LKVmYrXY36iEszqNLQ7eLc1thbhhOUmSlnbGB3EvLAWbGKBR5CN+YYPQgPgg63JI/V8VRlL8LVIn8F/3L1+WVmCLjGAKP4acH6ehyoi/0+1nbUD9IC9ox3PaMlbC4hi6ZIkMGtwl5Bs9JMjLE++zGYDkpi1aMF6VW2fdkOZown/JqUtGYymsbHVrmDBLKFtva2fb0NBYyz1SzM9/xdwBYQJvtd7IAGHsavX5I/Uem4ts9fA1l3gJyossxxGDgrlhKp6pBYf+QhtzYjoKZ+fosB6ENWg5ULEXEF+K+TkfD97RMUmtaRzc3zFa2chX20yBCc/4VLg0rv+UCygmfITnrkTNF7p/wB7/BQez2qaPSglFZ0098TRzD+oCzVLaTOelzgpYzSo46ANs8yl+mn9t8lXRyDMoy40/VjmPcrxf+BklNeNfvVxH+LtH/wbwlB8RF5IS8NxNLrPwrgC1r3zqEZhFp1H6TJtr1FJkI1G6WGkg263JLOw2iWlh+QBrsv8DOhHBJ+Yup41K8hmCg4=
+  - secure: SfQtGF2jmvqa8ZPFYZYwHFpaMwxLFXBp0eCqCtfZScTPLPbYtwXq/HUn1ABZ1fz8BVCmI4TLPfzXdD90QyD6FKM7R+2FEaX6027/JskNCwDNLS0zXZ7MNO1eChshI99WCSMnS6T+X68LMfz5yx8cKnpNEtb/+1zm628Lf9dXTyKcQ6kFKiQJUzxjVfqkiV+6KEsqdo2yHKb+FoCFRwi6AB1+p75Z4TJyCp0Q/Mj+UV0g7dMyR5oKer2KbAttO7yHo1SZb5ZMkmKMvhcDmI8tBUZ5QnK6STRFmdNXu05mRo7mS7Gq7GM6snSl8ZIUkj+zwBpVq0KNggZn6UeO15McaqrNaDMxoC5O/xWNd8TamU3/aM5AvfAGmklUkM+YgvEPef3Lm+WIg6vafLnM1k+sWaz8asMqcI/Ou9MiZpzXCLboBSH2wOyLEeybQ2km5O+g1Ia97evU116U2N7tbrF0mNEcFml2NIqSuDHD8W26NbaUZQ8tsLQG1GFZNaATCr4q9FYnIL7usQ24xr9MVh0SGBHPvMzNYjpYVtCAx4kuH8nWI/N/u0VZdHNbO642vWlh+G4edbh3Sn0o/SpyI/VP+XrqOW4l2FoeK+aIFe0LMNzr0NokFu6qCMWsVaTiu9sY6LCPUlcOEXQfMYfZuqOlQBOUK9UuDU6P4KergOT1Mpo=
+  - secure: YKXbZnBNoCjMc2HeCdTOzF9bJHjVaW+65lgsM3amczKPjecjKnLaNR56RDdjfPloipb4egeFt16AHylEGK6viXSSnvLCKt/o4MrzB8vwc7blLje4yUCTU9DoLQLul4ACO6Uk5tueRp27wgPSA7bqELTNP2t6Cn90uKcVdTKlcFQUc3qZPgtFe4gUdy/VA3r71wyvt0xCzW1ALNv7xfxoe5doRkU0urUJ1PbTBEIgJQpP4D2Ao+XXs0+8ULK1ykR0ejSosuRmdpYfVhn65sKUIBiO28JDirsZdvHhPDjw8BzdRhgqr+Mo99fPOLUAgjwefEdPBQfH7n2SB7wVgSGEbVEmw0F17e2kWA6GrTJTPQlmX3SfD+fNIJrJn5QI7VJ9KA7TbMLn+ScfZew7fN/ovCwCErOJxSp91NSbWlhxNI4umpqRdsdjT2LE4J4M98/LvlWjAQLCaPH1qqHvbc++Kk1JSDDRjLoXV50XhAZidVuNspmhjW+ZHeZ1TGj2gAesY7fDH5GYtlBPYJA2qpXicGCQrVPKqBxBAOOedfiQ5QsjdnKrownhm54bJEvTK7vB1UhyV6ycLKBeUXKm0M/ayuFMYgs88ML4Q1aMDrt2EhAZLIEZb16wQGYRw5VrmcvB0MppP/cY3EjvPPNPFdcv35GrKE0TvYITOTsM2+SYi+w=
+  - secure: RrjEw5tkoMJLDwmqnaRFc32ZELoGgdCdD2spqaVOykTmK6CO10HDT8wVvk2IZFoyfx3kbmUPh3JJnI+DiZ3qxzV3tkP9gu7lNBPMl0X1/yDmiuMIyWxE1UwWKv2y4WJWcPbI/qNnMb4E4iJSVxl8MudcoOgfvTV828b7a6/8tsWJNJ6F1LBI7Rg6GWMmKEN375JmgR0kZd2XUf6WirY2aUQ0ukEA86v9kIr8Ud1ggLRssYS+kRbUNDL7af2KIsH1ezvt5pf3IxxKLq6SZtT+UAaBKrL0T5kfT/gx8RYvuR8YeFQzGwSBsKdloucyyvrSTLjrJ5SezIONgwpWC5pq0djX9XPhW2TwgSQny14AKR09aeBMZmuvBbYAQahArQqGXo1LmadbSnPf5PaCGUbqvmk/TnChDng26jrBNmv0JCPyIJUmEtBzTQ/QXvMVZenxN4Wn2qgWT5yXTIAiPuI0QUnV/tqmKgYUGc3kg9Nd/YARyvHpzL/HuyejISx2s5PNEApLqkh+aDeUveK6eNMUveC9lbgL/eM28Q7aJfEa2ZQzr5yq5o5VWWb5W9qu65XR3xmGm4l4DAWtShXjA1xsO4OKqF0kDAkTasrX+rPwVCoKTXnkxTjPNil6iRT7wdhPpiYLGbTqwo5Ptkzyu669Sn4IQ/1Q0078USwYd0VN6/g=
+jobs:
+  include:
+  - stage: test
+    name: Run Tests
+    before_install:
+    - openssl aes-256-cbc -K $encrypted_2e6b62dd1b86_key -iv $encrypted_2e6b62dd1b86_iv
+      -in key.gpg.enc -out key.gpg -d
+    - gpg --import key.gpg
+    - rm key.gpg
+    - git config --global user.email "github-builduser@form3.tech"
+    - git config --global user.name "github-builduser"
+    - git config --global commit.gpgsign true
+    script:
+    - "./scripts/travis_update_vendor.sh"
+    - make install-goimports
+    - make test
+  - stage: test
+    name: Security Scan
+    script:
+    - make scan-code
+  - stage: deploy
+    name: GitHub Release
+    if: "(commit_message =~ /(--release)/ OR branch = master) AND type != pull_request"
+    script:
+    - CURR_TAG=$(git tag | sort -V | tail -1 | grep -oP "^v[0-9]+\.[0-9]+\.[0-9]+");
+      CURR_PATCH_V=$(echo $CURR_TAG | grep -oP "[0-9]+$"); NEXT_PATCH_V=$(($CURR_PATCH_V
+      + 1)); NEXT_TAG=$(echo $CURR_TAG | sed "s/[0-9]*\$/$NEXT_PATCH_V/g"); git tag
+      -a $NEXT_TAG -m "Auto-Release - $NEXT_TAG"
+    deploy:
+    - provider: releases
+      api_key: "$GITHUB_TOKEN"
+      skip_cleanup: true
+      name: Auto-release ${NEXT_TAG}
+      body: "${NEXT_TAG}"
+      prerelease: false
