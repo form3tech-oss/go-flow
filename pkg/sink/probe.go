@@ -2,6 +2,7 @@ package sink
 
 import (
 	"context"
+	"github.com/form3tech-oss/go-flow/pkg/option"
 	"sync"
 	"testing"
 	"time"
@@ -14,9 +15,14 @@ type probeSink struct {
 	items  []interface{}
 	t      *testing.T
 	ctx    context.Context
+	input  chan stream.Element
 }
 
-func (p *probeSink) SetSource(source stream.Source) stream.Runnable {
+func (p *probeSink) Input() chan stream.Element {
+	return p.input
+}
+
+func (p *probeSink) WireSourceToSink(source stream.Source) stream.Runnable {
 	p.source = source
 	return p
 }
@@ -33,11 +39,11 @@ func (p *probeSink) Request(number int, timeout time.Duration) {
 	go func() {
 		defer wg.Done()
 		ti := time.After(timeout)
-		for p.source.Output() != nil {
+		for p.input != nil {
 			select {
 			case <-p.ctx.Done():
 				return
-			case element, ok := <-p.source.Output():
+			case element, ok := <-p.input:
 				if !ok {
 					return
 				}
@@ -63,17 +69,18 @@ func (p *probeSink) Expect(expected ...interface{}) {
 }
 
 func (p *probeSink) ExpectComplete() {
-	_, ok := <-p.source.Output()
+	_, ok := <-p.input
 	if ok {
-		p.t.Error("Expected the source out put channel to be closed.")
+		p.t.Error("Expected the source output channel to be closed.")
 	}
 }
 
-func Probe(t *testing.T) *probeSink {
+func Probe(t *testing.T, options ...option.Option) *probeSink {
 	return &probeSink{
 		source: nil,
 		t:      t,
 		ctx:    context.Background(),
+		input:  option.CreateChannel(options...),
 	}
 }
 

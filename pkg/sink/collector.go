@@ -9,6 +9,11 @@ import (
 type collectorSink struct {
 	source    stream.Source
 	collector Collector
+	input     chan stream.Element
+}
+
+func (s *collectorSink) Input() chan stream.Element {
+	return s.input
 }
 
 type Collector interface {
@@ -16,9 +21,9 @@ type Collector interface {
 	Run(ctx context.Context)
 }
 
-func (s *collectorSink) SetSource(source stream.Source) stream.Runnable {
+func (s *collectorSink) WireSourceToSink(source stream.Source) stream.Runnable {
 	s.source = source
-	s.collector.SetInput(s.source.Output())
+	s.collector.SetInput(s.input)
 	return s
 }
 

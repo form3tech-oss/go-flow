@@ -11,24 +11,33 @@ type ProbeSource struct {
 	ctx    context.Context
 }
 
-func (t *ProbeSource) Output() chan stream.Element {
-	return t.output
+func (t *ProbeSource) DivertTo(sink stream.Sink, when stream.Predicate) stream.Source {
+	panic("implement me")
 }
 
-func (t *ProbeSource) Via(operation stream.Flow) stream.Source {
-	return operation.SetSource(t)
+func (t *ProbeSource) Via(flow stream.Flow) stream.Source {
+	t.output = flow.Input()
+	return flow.WireSourceToFlow(t)
 }
 
 func (t *ProbeSource) To(sink stream.Sink) stream.Runnable {
-	return sink.SetSource(t)
+	t.output = sink.Input()
+	return sink.WireSourceToSink(t)
 }
 
 func (t *ProbeSource) Run(ctx context.Context) {
 	t.ctx = ctx
 }
 
-func (t *ProbeSource) SendNext(item interface{}) {
-	t.output <- stream.Value(item)
+func (t *ProbeSource) SendAndComplete(items ... interface{}) {
+	t.Send(items ...)
+	t.Complete()
+}
+
+func (t *ProbeSource) Send(items ... interface{}) {
+	for _, item := range items {
+		t.output <- stream.Value(item)
+	}
 }
 
 func (t *ProbeSource) Complete() {
@@ -37,7 +46,6 @@ func (t *ProbeSource) Complete() {
 
 func Probe() *ProbeSource {
 	return &ProbeSource{
-		output: make(chan stream.Element),
 		ctx:    context.Background(),
 	}
 }

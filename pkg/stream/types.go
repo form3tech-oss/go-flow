@@ -2,20 +2,25 @@ package stream
 
 import "context"
 
+type Predicate func(element Element) bool
+
 type Source interface {
-	Output() chan Element
 	Via(flow Flow) Source
 	To(sink Sink) Runnable
+	DivertTo(sink Sink, when Predicate) Source
 	Runnable
 }
 
 type Sink interface {
-	SetSource(source Source) Runnable
+	Input() chan Element
+	WireSourceToSink(source Source) Runnable
 	Runnable
 }
 
 type Flow interface {
-	SetSource(source Source) Source
+	Input() chan Element
+	WireSourceToFlow(source Source) Source
+	DivertTo(sink Sink, when Predicate) Source
 	Source
 }
 

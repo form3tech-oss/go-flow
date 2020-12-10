@@ -2,6 +2,7 @@ package source
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/form3tech-oss/go-flow/pkg/option"
 	"github.com/form3tech-oss/go-flow/pkg/stream"
@@ -13,8 +14,8 @@ type rangeEmitter struct {
 	output chan stream.Element
 }
 
-func (r *rangeEmitter) Output() chan stream.Element {
-	return r.output
+func (r *rangeEmitter) SetOutput(output chan stream.Element) {
+	r.output = output
 }
 
 func (r *rangeEmitter) Run(ctx context.Context) {
@@ -31,9 +32,30 @@ func (r *rangeEmitter) Run(ctx context.Context) {
 }
 
 func Range(start int, end int, options ...option.Option) stream.Source {
-	return FromEmitter(&rangeEmitter{
-		start:  start,
-		end:    end,
-		output: option.CreateChannel(options...),
+	return FromIterator(&rangeIterator{
+		start:   start,
+		end:     end,
+		current: start,
 	})
+}
+
+/// Range Iterator
+
+type rangeIterator struct {
+	start   int
+	current int
+	end     int
+}
+
+func (r *rangeIterator) HasNext() bool {
+	return r.current <= r.end
+}
+
+func (r *rangeIterator) GetNext() stream.Element {
+	if r.HasNext() {
+		element := stream.Value(r.current)
+		r.current++
+		return element
+	}
+	return stream.Error(fmt.Errorf("end of stream"))
 }

@@ -2,29 +2,32 @@ package source
 
 import (
 	"context"
-
 	"github.com/form3tech-oss/go-flow/pkg/stream"
 )
 
 type Emitter interface {
-	Output() chan stream.Element
+	SetOutput(output chan stream.Element)
 	Run(ctx context.Context)
 }
 
 type emitterSource struct {
-	emitter Emitter
+	emitter      Emitter
+	divertedSink stream.Sink
+	whenToDivert stream.Predicate
 }
 
-func (e emitterSource) Output() chan stream.Element {
-	return e.emitter.Output()
+func (e emitterSource) DivertTo(sink stream.Sink, when stream.Predicate) stream.Source {
+	panic("implement me")
 }
 
 func (e emitterSource) Via(operation stream.Flow) stream.Source {
-	return operation.SetSource(e)
+	e.emitter.SetOutput(operation.Input())
+	return operation.WireSourceToFlow(e)
 }
 
 func (e emitterSource) To(sink stream.Sink) stream.Runnable {
-	return sink.SetSource(e)
+	e.emitter.SetOutput(sink.Input())
+	return sink.WireSourceToSink(e)
 }
 
 func (e emitterSource) Run(ctx context.Context) {

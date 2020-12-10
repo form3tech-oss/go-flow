@@ -19,13 +19,7 @@ func TestProbe_ReadsExpectedAndCompletes(t *testing.T) {
 	source.To(sinkUnderTest).Run(context.Background())
 
 	go func() {
-		source.SendNext(1)
-		source.SendNext(2)
-		source.SendNext(3)
-		source.SendNext(4)
-		source.SendNext(5)
-		source.SendNext(6)
-		source.Complete()
+		source.SendAndComplete(1,2,3,4,5,6)
 	}()
 
 	sinkUnderTest.Request(1, 1*time.Second)
