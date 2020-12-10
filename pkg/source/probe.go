@@ -3,28 +3,28 @@ package source
 import (
 	"context"
 
-	"github.com/form3tech-oss/go-flow/pkg/stream"
+	"github.com/form3tech-oss/go-flow/pkg/types"
 )
 
 type ProbeSource struct {
-	output chan stream.Element
+	output chan types.Element
 	ctx    context.Context
 }
 
-func (t *ProbeSource) AlsoTo(sink stream.Sink) stream.Source {
+func (t *ProbeSource) AlsoTo(sink types.Sink) types.Source {
 	panic("implement me")
 }
 
-func (t *ProbeSource) DivertTo(sink stream.Sink, when stream.Predicate) stream.Source {
+func (t *ProbeSource) DivertTo(sink types.Sink, when types.Predicate) types.Source {
 	panic("implement me")
 }
 
-func (t *ProbeSource) Via(flow stream.Flow) stream.Source {
+func (t *ProbeSource) Via(flow types.Flow) types.Source {
 	t.output = flow.Input()
 	return flow.WireSourceToFlow(t)
 }
 
-func (t *ProbeSource) To(sink stream.Sink) stream.Runnable {
+func (t *ProbeSource) To(sink types.Sink) types.Runnable {
 	t.output = sink.Input()
 	return sink.WireSourceToSink(t)
 }
@@ -40,7 +40,7 @@ func (t *ProbeSource) SendAndComplete(items ...interface{}) {
 
 func (t *ProbeSource) Send(items ...interface{}) {
 	for _, item := range items {
-		t.output <- stream.Value(item)
+		t.output <- types.Value(item)
 	}
 }
 

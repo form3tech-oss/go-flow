@@ -7,7 +7,7 @@ import (
 
 	"github.com/form3tech-oss/go-flow/pkg/sink"
 	"github.com/form3tech-oss/go-flow/pkg/source"
-	"github.com/form3tech-oss/go-flow/pkg/stream"
+	"github.com/form3tech-oss/go-flow/pkg/types"
 	"go.uber.org/goleak"
 )
 
@@ -17,8 +17,8 @@ func TestMappingOperator_Run(t *testing.T) {
 	sourceProbe := source.Probe()
 	sinkProbe := sink.Probe(t)
 
-	flowUnderTest := Map(func(element stream.Element) stream.Element {
-		return stream.Value(element.Value.(int) * 2)
+	flowUnderTest := Map(func(element types.Element) types.Element {
+		return types.Value(element.Value.(int) * 2)
 	})
 
 	sourceProbe.Via(flowUnderTest).To(sinkProbe).Run(context.Background())
@@ -39,11 +39,11 @@ func TestMappingOperator_WithDiversion(t *testing.T) {
 	terminationProbe := sink.Probe(t)
 	divertProbe := sink.Probe(t)
 
-	mapping := func(element stream.Element) stream.Element {
-		return stream.Value(element.Value.(int) * 2)
+	mapping := func(element types.Element) types.Element {
+		return types.Value(element.Value.(int) * 2)
 	}
 
-	whenGreaterThan10 := func(element stream.Element) bool {
+	whenGreaterThan10 := func(element types.Element) bool {
 		return element.Value.(int) > 5
 	}
 

@@ -5,24 +5,24 @@ import (
 
 	"github.com/form3tech-oss/go-flow/pkg/option"
 
-	"github.com/form3tech-oss/go-flow/pkg/stream"
+	"github.com/form3tech-oss/go-flow/pkg/types"
 )
 
 type collectorSink struct {
-	source    stream.Source
+	source    types.Source
 	collector Collector
-	input     chan stream.Element
+	input     chan types.Element
 }
 
-func (s *collectorSink) Input() chan stream.Element {
+func (s *collectorSink) Input() chan types.Element {
 	return s.input
 }
 
 type Collector interface {
-	Collect(element stream.Element)
+	Collect(element types.Element)
 }
 
-func (s *collectorSink) WireSourceToSink(source stream.Source) stream.Runnable {
+func (s *collectorSink) WireSourceToSink(source types.Source) types.Runnable {
 	s.source = source
 	return s
 }
@@ -45,7 +45,7 @@ func (s *collectorSink) Run(ctx context.Context) {
 	}()
 }
 
-func FromCollector(collector Collector, options ...option.Option) stream.Sink {
+func FromCollector(collector Collector, options ...option.Option) types.Sink {
 	return &collectorSink{
 		collector: collector,
 		input:     option.CreateChannel(options...),

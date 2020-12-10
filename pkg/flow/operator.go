@@ -4,50 +4,50 @@ import (
 	"context"
 
 	"github.com/form3tech-oss/go-flow/pkg/option"
-	"github.com/form3tech-oss/go-flow/pkg/stream"
+	"github.com/form3tech-oss/go-flow/pkg/types"
 )
 
 type Operator interface {
-	apply(element stream.Element) (stream.Element, bool)
+	apply(element types.Element) (types.Element, bool)
 }
 
 type operatorFlow struct {
-	source    stream.Source
+	source    types.Source
 	operator  Operator
-	input     chan stream.Element
-	output    chan stream.Element
-	diversion stream.Sink
-	divert    stream.Predicate
-	alsoTo stream.Sink
+	input     chan types.Element
+	output    chan types.Element
+	diversion types.Sink
+	divert    types.Predicate
+	alsoTo    types.Sink
 }
 
 
-func (o *operatorFlow) AlsoTo(sink stream.Sink) stream.Source {
+func (o *operatorFlow) AlsoTo(sink types.Sink) types.Source {
 	o.alsoTo = sink
 	return o
 }
 
-func (o *operatorFlow) Input() chan stream.Element {
+func (o *operatorFlow) Input() chan types.Element {
 	return o.input
 }
 
-func (o *operatorFlow) DivertTo(sink stream.Sink, when stream.Predicate) stream.Source {
+func (o *operatorFlow) DivertTo(sink types.Sink, when types.Predicate) types.Source {
 	o.diversion = sink
 	o.divert = when
 	return o
 }
 
-func (o *operatorFlow) WireSourceToFlow(source stream.Source) stream.Source {
+func (o *operatorFlow) WireSourceToFlow(source types.Source) types.Source {
 	o.source = source
 	return o
 }
 
-func (o *operatorFlow) Via(flow stream.Flow) stream.Source {
+func (o *operatorFlow) Via(flow types.Flow) types.Source {
 	o.output = flow.Input()
 	return flow.WireSourceToFlow(o)
 }
 
-func (o *operatorFlow) To(sink stream.Sink) stream.Runnable {
+func (o *operatorFlow) To(sink types.Sink) types.Runnable {
 	o.output = sink.Input()
 	return sink.WireSourceToSink(o)
 }
@@ -104,11 +104,11 @@ func (o *operatorFlow) closeOutputs() {
 	}
 }
 
-func FromOperator(operator Operator, options ...option.Option) stream.Flow {
+func FromOperator(operator Operator, options ...option.Option) types.Flow {
 	return &operatorFlow{
 		operator: operator,
 		input:    option.CreateChannel(options...),
-		divert: func(element stream.Element) bool {
+		divert: func(element types.Element) bool {
 			return false
 		},
 	}

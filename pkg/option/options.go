@@ -1,6 +1,6 @@
 package option
 
-import "github.com/form3tech-oss/go-flow/pkg/stream"
+import "github.com/form3tech-oss/go-flow/pkg/types"
 
 type optionState struct {
 	channelBuffer int
@@ -21,10 +21,10 @@ func getOptions(options ...Option) *optionState {
 	return state
 }
 
-func CreateChannel(options ...Option) chan stream.Element {
+func CreateChannel(options ...Option) chan types.Element {
 	state := getOptions(options...)
 	if state.channelBuffer > 0 {
-		return make(chan stream.Element, state.channelBuffer)
+		return make(chan types.Element, state.channelBuffer)
 	}
-	return make(chan stream.Element)
+	return make(chan types.Element)
 }

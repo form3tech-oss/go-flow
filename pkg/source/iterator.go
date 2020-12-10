@@ -3,38 +3,38 @@ package source
 import (
 	"context"
 
-	"github.com/form3tech-oss/go-flow/pkg/stream"
+	"github.com/form3tech-oss/go-flow/pkg/types"
 )
 
 type Iterator interface {
 	HasNext(ctx context.Context) bool
-	GetNext(ctx context.Context) stream.Element
+	GetNext(ctx context.Context) types.Element
 }
 
 type iteratorSource struct {
 	iterator  Iterator
-	output    chan stream.Element
-	diversion stream.Sink
-	divert    stream.Predicate
-	alsoTo    stream.Sink
+	output    chan types.Element
+	diversion types.Sink
+	divert    types.Predicate
+	alsoTo    types.Sink
 }
 
-func (i *iteratorSource) AlsoTo(sink stream.Sink) stream.Source {
+func (i *iteratorSource) AlsoTo(sink types.Sink) types.Source {
 	i.alsoTo = sink
 	return i
 }
 
-func (i *iteratorSource) Via(flow stream.Flow) stream.Source {
+func (i *iteratorSource) Via(flow types.Flow) types.Source {
 	i.output = flow.Input()
 	return flow.WireSourceToFlow(i)
 }
 
-func (i *iteratorSource) To(sink stream.Sink) stream.Runnable {
+func (i *iteratorSource) To(sink types.Sink) types.Runnable {
 	i.output = sink.Input()
 	return sink.WireSourceToSink(i)
 }
 
-func (i *iteratorSource) DivertTo(sink stream.Sink, when stream.Predicate) stream.Source {
+func (i *iteratorSource) DivertTo(sink types.Sink, when types.Predicate) types.Source {
 	i.diversion = sink
 	i.divert = when
 	return i
@@ -75,10 +75,10 @@ func (i *iteratorSource) closeOutputs() {
 	}
 }
 
-func FromIterator(iterator Iterator) stream.Source {
+func FromIterator(iterator Iterator) types.Source {
 	return &iteratorSource{
 		iterator: iterator,
-		divert: func(element stream.Element) bool {
+		divert: func(element types.Element) bool {
 			return false
 		},
 	}

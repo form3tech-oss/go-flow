@@ -8,22 +8,22 @@ import (
 
 	"github.com/form3tech-oss/go-flow/pkg/option"
 
-	"github.com/form3tech-oss/go-flow/pkg/stream"
+	"github.com/form3tech-oss/go-flow/pkg/types"
 )
 
 type probeSink struct {
-	source stream.Source
+	source types.Source
 	items  []interface{}
 	t      *testing.T
 	ctx    context.Context
-	input  chan stream.Element
+	input  chan types.Element
 }
 
-func (p *probeSink) Input() chan stream.Element {
+func (p *probeSink) Input() chan types.Element {
 	return p.input
 }
 
-func (p *probeSink) WireSourceToSink(source stream.Source) stream.Runnable {
+func (p *probeSink) WireSourceToSink(source types.Source) types.Runnable {
 	p.source = source
 	return p
 }

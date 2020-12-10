@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/form3tech-oss/go-flow/pkg/option"
-	"github.com/form3tech-oss/go-flow/pkg/stream"
+	"github.com/form3tech-oss/go-flow/pkg/types"
 
 	"github.com/form3tech-oss/go-flow/pkg/sink"
 	"go.uber.org/goleak"
@@ -32,7 +32,7 @@ func TestRange_CanBeDivertedAndCompletes(t *testing.T) {
 	defer goleak.VerifyNone(t)
 	minProbe := sink.Probe(t)
 	maxProbe := sink.Probe(t)
-	sourceUnderTest := Range(1, 10).DivertTo(maxProbe, func(element stream.Element) bool {
+	sourceUnderTest := Range(1, 10).DivertTo(maxProbe, func(element types.Element) bool {
 		return element.Value.(int) > 5
 	}).To(minProbe)
 

@@ -3,18 +3,18 @@ package source
 import (
 	"context"
 
-	"github.com/form3tech-oss/go-flow/pkg/stream"
+	"github.com/form3tech-oss/go-flow/pkg/types"
 )
 
 type Emitter interface {
-	Output() chan stream.Element
+	Output() chan types.Element
 	Run(ctx context.Context)
 }
 
 type emitterIterator struct {
 	hasStarted bool
-	emitter Emitter
-	current stream.Element
+	emitter    Emitter
+	current    types.Element
 }
 
 func (e emitterIterator) HasNext(ctx context.Context) bool {
@@ -28,10 +28,10 @@ func (e emitterIterator) HasNext(ctx context.Context) bool {
 	return ok
 }
 
-func (e emitterIterator) GetNext(ctx context.Context) stream.Element {
+func (e emitterIterator) GetNext(ctx context.Context) types.Element {
 	return e.current
 }
 
-func FromEmitter(emitter Emitter) stream.Source {
+func FromEmitter(emitter Emitter) types.Source {
 	return FromIterator(emitterIterator{})
 }
