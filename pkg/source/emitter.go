@@ -12,11 +12,15 @@ type Emitter interface {
 }
 
 type emitterIterator struct {
+	hasStarted bool
 	emitter Emitter
 	current stream.Element
 }
 
 func (e emitterIterator) HasNext(ctx context.Context) bool {
+	if !e.hasStarted {
+		e.emitter.Run(ctx)
+	}
 	element, ok := <-e.emitter.Output()
 	if ok {
 		e.current = element
