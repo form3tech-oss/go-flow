@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/form3tech/go-logger/log"
 	"os"
+
+	"github.com/form3tech/go-logger/log"
 )
 
 func Start(ch <-chan os.Signal, startedSignal chan bool, stopped chan struct{}) {

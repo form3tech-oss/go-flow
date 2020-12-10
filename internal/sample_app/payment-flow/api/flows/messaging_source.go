@@ -5,7 +5,6 @@ import (
 )
 
 type Source struct {
-
 }
 
 func NewMessagingSource() *Source {

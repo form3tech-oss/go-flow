@@ -4,22 +4,23 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/events"
 	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/flows"
 	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/internalmodels"
 	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/storage"
 	"github.com/giantswarm/retry-go"
 	"github.com/google/uuid"
-	"net/http"
-	"os"
-	"time"
 
 	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/settings"
 
 	"github.com/form3tech/go-cdc/cdc"
 	"github.com/form3tech/go-cqrs/cqrs"
 	"github.com/form3tech/go-logger/log"
-		"github.com/jmoiron/sqlx"
+	"github.com/jmoiron/sqlx"
 	"github.com/liamg/waitforhttp"
 	_ "github.com/lib/pq"
 	_ "github.com/mattes/migrate/source/file"
@@ -27,7 +28,6 @@ import (
 
 	migrate "github.com/rubenv/sql-migrate"
 )
-
 
 func Configure() {
 	viper.AutomaticEnv()
@@ -37,10 +37,9 @@ func Configure() {
 
 	migrateDatabase(db.DB)
 
-
 	// HACK
 	w := storage.GetPaymentWriter(db)
-	for i:= 0; i < 10; i++ {
+	for i := 0; i < 10; i++ {
 		ctx := context.Background()
 		w.Create(&ctx, &internalmodels.Payment{
 			ID: uuid.New(),

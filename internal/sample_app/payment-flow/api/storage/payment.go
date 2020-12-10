@@ -3,8 +3,9 @@ package storage
 import (
 	"context"
 	"database/sql"
-	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/internalmodels"
 	"time"
+
+	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/internalmodels"
 
 	"github.com/form3tech/go-data/data"
 	"github.com/form3tech/go-form3-web/web"
@@ -86,7 +87,7 @@ func (s *PaymentStorage) GetByID(id uuid.UUID) (*internalmodels.Payment, error) 
 
 func (s *PaymentStorage) GetByFilterCriteria(criteria *PaymentFilterPayment) ([]*internalmodels.Payment, int, error) {
 	var result []*struct {
-		Payment          *internalmodels.Payment          `db:"Payment"`
+		Payment *internalmodels.Payment `db:"Payment"`
 	}
 
 	q := data.

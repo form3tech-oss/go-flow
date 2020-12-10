@@ -1,9 +1,10 @@
 package internalmodels
 
 import (
+	"time"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/google/uuid"
-	"time"
 )
 
 type Payment struct {

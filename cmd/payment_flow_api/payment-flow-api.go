@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api"
 )
 
 func main() {
