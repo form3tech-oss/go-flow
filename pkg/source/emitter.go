@@ -7,34 +7,27 @@ import (
 )
 
 type Emitter interface {
-	SetOutput(output chan stream.Element)
+	Output() chan stream.Element
 	Run(ctx context.Context)
 }
 
-type emitterSource struct {
-	emitter      Emitter
-	divertedSink stream.Sink
-	whenToDivert stream.Predicate
+type emitterIterator struct {
+	emitter Emitter
+	current stream.Element
 }
 
-func (e emitterSource) DivertTo(sink stream.Sink, when stream.Predicate) stream.Source {
-	panic("implement me")
+func (e emitterIterator) HasNext(ctx context.Context) bool {
+	element, ok := <-e.emitter.Output()
+	if ok {
+		e.current = element
+	}
+	return ok
 }
 
-func (e emitterSource) Via(operation stream.Flow) stream.Source {
-	e.emitter.SetOutput(operation.Input())
-	return operation.WireSourceToFlow(e)
-}
-
-func (e emitterSource) To(sink stream.Sink) stream.Runnable {
-	e.emitter.SetOutput(sink.Input())
-	return sink.WireSourceToSink(e)
-}
-
-func (e emitterSource) Run(ctx context.Context) {
-	e.emitter.Run(ctx)
+func (e emitterIterator) GetNext(ctx context.Context) stream.Element {
+	return e.current
 }
 
 func FromEmitter(emitter Emitter) stream.Source {
-	return emitterSource{emitter: emitter}
+	return FromIterator(emitterIterator{})
 }

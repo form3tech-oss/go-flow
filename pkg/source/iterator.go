@@ -7,8 +7,8 @@ import (
 )
 
 type Iterator interface {
-	HasNext() bool
-	GetNext() stream.Element
+	HasNext(ctx context.Context) bool
+	GetNext(ctx context.Context) stream.Element
 }
 
 type iteratorSource struct {
@@ -37,8 +37,8 @@ func (i *iteratorSource) DivertTo(sink stream.Sink, when stream.Predicate) strea
 func (i *iteratorSource) Run(ctx context.Context) {
 	go func() {
 		defer i.closeOutputs()
-		for i.iterator.HasNext() {
-			element := i.iterator.GetNext()
+		for i.iterator.HasNext(ctx) {
+			element := i.iterator.GetNext(ctx)
 			select {
 			case <-ctx.Done():
 				return

@@ -8,29 +8,6 @@ import (
 	"github.com/form3tech-oss/go-flow/pkg/stream"
 )
 
-type rangeEmitter struct {
-	start  int
-	end    int
-	output chan stream.Element
-}
-
-func (r *rangeEmitter) SetOutput(output chan stream.Element) {
-	r.output = output
-}
-
-func (r *rangeEmitter) Run(ctx context.Context) {
-	go func() {
-		for number := r.start; number <= r.end; number++ {
-			select {
-			case <-ctx.Done():
-				return
-			case r.output <- stream.Value(number):
-			}
-		}
-		close(r.output)
-	}()
-}
-
 func Range(start int, end int, options ...option.Option) stream.Source {
 	return FromIterator(&rangeIterator{
 		start:   start,
@@ -39,20 +16,18 @@ func Range(start int, end int, options ...option.Option) stream.Source {
 	})
 }
 
-/// Range Iterator
-
 type rangeIterator struct {
 	start   int
 	current int
 	end     int
 }
 
-func (r *rangeIterator) HasNext() bool {
+func (r *rangeIterator) HasNext(ctx context.Context) bool {
 	return r.current <= r.end
 }
 
-func (r *rangeIterator) GetNext() stream.Element {
-	if r.HasNext() {
+func (r *rangeIterator) GetNext(ctx context.Context) stream.Element {
+	if r.HasNext(ctx) {
 		element := stream.Value(r.current)
 		r.current++
 		return element
