@@ -4,17 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/form3tech-oss/go-flow/pkg/option"
 	"github.com/form3tech-oss/go-flow/pkg/types"
 )
-
-func Range(start int, end int, options ...option.Option) types.Source {
-	return FromIterator(&rangeIterator{
-		start:   start,
-		end:     end,
-		current: start,
-	})
-}
 
 type rangeIterator struct {
 	start   int

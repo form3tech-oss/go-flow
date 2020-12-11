@@ -32,7 +32,6 @@ func (p *probeSink) Run(ctx context.Context) {
 	if p.source != nil {
 		p.source.Run(ctx)
 	}
-
 	p.ctx = ctx
 }
 

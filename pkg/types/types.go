@@ -29,3 +29,13 @@ type Flow interface {
 type Runnable interface {
 	Run(ctx context.Context)
 }
+
+type Emitter interface {
+	Output() chan Element
+	Run(ctx context.Context)
+}
+
+type Iterator interface {
+	HasNext(ctx context.Context) bool
+	GetNext(ctx context.Context) Element
+}
