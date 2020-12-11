@@ -2,6 +2,10 @@ package iterator
 
 import "github.com/form3tech-oss/go-flow/pkg/types"
 
+func Single(value int) types.Iterator {
+	return ofAny(intsToAny(value))
+}
+
 func OfStrings(value ...string) types.Iterator {
 	return ofAny(stringsToAny(value...))
 }

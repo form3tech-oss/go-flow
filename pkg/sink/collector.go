@@ -19,7 +19,7 @@ func (s *collectorSink) Input() chan types.Element {
 }
 
 type Collector interface {
-	Collect(element types.Element)
+	Collect(ctx context.Context, element types.Element)
 }
 
 func (s *collectorSink) WireSourceToSink(source types.Source) types.Runnable {
@@ -38,7 +38,7 @@ func (s *collectorSink) Run(ctx context.Context) {
 				if !ok {
 					return
 				}
-				s.collector.Collect(element)
+				s.collector.Collect(ctx, element)
 			default:
 			}
 		}

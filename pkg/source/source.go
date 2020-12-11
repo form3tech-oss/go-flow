@@ -48,6 +48,9 @@ func (s *source) Run(ctx context.Context) {
 					s.diversion.Input() <- element
 				} else {
 					s.output <- element
+					if s.alsoTo != nil {
+						s.alsoTo.Input() <- element
+					}
 				}
 			}
 		}
