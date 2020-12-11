@@ -2,7 +2,7 @@ package iterator
 
 import (
 	"github.com/form3tech-oss/go-flow/pkg/types"
-	"net/http"
+	"github.com/gin-gonic/gin"
 )
 
 func Single(value int) types.Iterator {
@@ -13,8 +13,8 @@ func OfStrings(value ...string) types.Iterator {
 	return ofAny(stringsToAny(value...))
 }
 
-func OfHttpRequests(value ...*http.Request) types.Iterator {
-	return ofAny(httpRequestsToAny(value...))
+func OfGinContexts(value ...*gin.Context) types.Iterator {
+	return ofAny(ginContextToAny(value...))
 }
 
 func OfInts(value ...int) types.Iterator {
@@ -36,7 +36,7 @@ func stringsToAny(in ...string) []interface{} {
 	return out
 }
 
-func httpRequestsToAny(in ...*http.Request) []interface{} {
+func ginContextToAny(in ...*gin.Context) []interface{} {
 	out := make([]interface{}, len(in))
 	for i := range in {
 		out[i] = in[i]

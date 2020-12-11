@@ -4,7 +4,7 @@ import (
 	"github.com/form3tech-oss/go-flow/pkg/option"
 	"github.com/form3tech-oss/go-flow/pkg/source/iterator"
 	"github.com/form3tech-oss/go-flow/pkg/types"
-	"net/http"
+	"github.com/gin-gonic/gin"
 )
 
 func FromIterator(iterator types.Iterator) types.Source {
@@ -35,6 +35,6 @@ func SingleOfInt(value ...int) types.Source {
 func SingleOfString(value ...string) types.Source {
 	return FromIterator(iterator.OfStrings(value...))
 }
-func SingleOfHttpRequest(value ...*http.Request) types.Source {
-	return FromIterator(iterator.OfHttpRequests(value...))
+func SingleOfGinContext(value ...*gin.Context) types.Source {
+	return FromIterator(iterator.OfGinContexts(value...))
 }

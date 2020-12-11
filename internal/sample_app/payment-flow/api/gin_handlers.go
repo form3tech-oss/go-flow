@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/internalmodels"
 	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/storage"
@@ -12,16 +11,15 @@ import (
 	"github.com/form3tech-oss/go-flow/pkg/types"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
-	"io/ioutil"
-	"net/http"
 )
 
 func handlePayment(db *sqlx.DB) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		source.SingleOfHttpRequest(c.Request).
+		source.SingleOfGinContext(c).
 			Via(flow.Map(httpRequestToPayment)).
 			//Via(ValidatePayment()).
 			To(sink.FromCollector(StorePaymentInPostgres(db))).
+			//AlsoTo(sink.response).
 			Run(c)
 	}
 }
@@ -31,18 +29,14 @@ func StorePaymentInPostgres(db *sqlx.DB) sink.Collector {
 }
 
 func httpRequestToPayment(from types.Element) types.Element {
-	request, ok := from.Value.(*http.Request)
+	request, ok := from.Value.(*gin.Context)
 	if !ok {
 		return types.Error(fmt.Errorf("unexpected type"))
 	}
 
 	var payment internalmodels.Payment
 
-	bytes, err := ioutil.ReadAll(request.Body)
-	if err != nil {
-		return types.Error(err)
-	}
-	err = json.Unmarshal(bytes, &payment)
+	err := request.BindJSON(&payment)
 	if err != nil {
 		return types.Error(err)
 	}
