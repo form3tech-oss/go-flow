@@ -7,7 +7,7 @@ import (
 	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/storage"
 	"github.com/form3tech-oss/go-flow/pkg/flow"
 	"github.com/form3tech-oss/go-flow/pkg/sink"
-	"github.com/form3tech-oss/go-flow/pkg/source"
+	"github.com/form3tech-oss/go-flow/pkg/http"
 	"github.com/form3tech-oss/go-flow/pkg/types"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -15,33 +15,56 @@ import (
 
 func handlePayment(db *sqlx.DB) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		source.SingleOfGinContext(c).
-			Via(flow.Map(httpRequestToPayment)).
-			//Via(ValidatePayment()).
-			To(sink.FromCollector(StorePaymentInPostgres(db))).
-			//AlsoTo(sink.response).
+		http.Source(c).
+			Via(flow.Map(ContextToPaymentRequest())).
+			Via(flow.Map(PaymentIsValid())).
+			Via(flow.Map(PaymentPersisted())).
+			Via(flow.Map(PaymentPersistedToResponse())).
+			To(http.Sink(c)).
 			Run(c)
 	}
 }
+
+func ContextToPaymentRequest() flow.Mapper {
+	return func(from types.Element) types.Element {
+		request, ok := from.Value.(*gin.Context)
+		if !ok {
+			return types.Error(fmt.Errorf("unexpected type"))
+		}
+
+		var payment internalmodels.Payment
+
+		err := request.BindJSON(&payment)
+		if err != nil {
+			return types.Error(err)
+		}
+		return types.Value(payment)
+	}
+}
+
+func PaymentIsValid() flow.Mapper {
+	return func(from types.Element) types.Element {
+		return from
+	}
+}
+
+func PaymentPersisted() flow.Mapper {
+	return func(from types.Element) types.Element {
+		return from
+	}
+}
+
+func PaymentPersistedToResponse() flow.Mapper {
+	return func(from types.Element) types.Element {
+		return from
+	}
+}
+
 
 func StorePaymentInPostgres(db *sqlx.DB) sink.Collector {
 	return &postgresCollector{db: db}
 }
 
-func httpRequestToPayment(from types.Element) types.Element {
-	request, ok := from.Value.(*gin.Context)
-	if !ok {
-		return types.Error(fmt.Errorf("unexpected type"))
-	}
-
-	var payment internalmodels.Payment
-
-	err := request.BindJSON(&payment)
-	if err != nil {
-		return types.Error(err)
-	}
-	return types.Value(payment)
-}
 
 type postgresCollector struct {
 	db *sqlx.DB

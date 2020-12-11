@@ -24,7 +24,7 @@ func (s *sliceIterator) GetNext(ctx context.Context) types.Element {
 	return types.Error(fmt.Errorf("reached end of slice"))
 }
 
-func ofAny(value []interface{}) types.Iterator {
+func OfAny(value []interface{}) types.Iterator {
 	return &sliceIterator{
 		items:        value,
 		currentIndex: 0,

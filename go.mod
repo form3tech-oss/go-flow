@@ -29,7 +29,6 @@ require (
 	github.com/go-resty/resty/v2 v2.3.0
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.8.0 // indirect
-	github.com/hashicorp/go-msgpack v0.5.5 // indirect
 	github.com/hashicorp/go-sockaddr v1.0.2 // indirect
 	github.com/hashicorp/go-uuid v1.0.2 // indirect
 	github.com/hashicorp/go-version v1.2.1-0.20191009193637-2046c9d0f0b0 // indirect
@@ -38,6 +37,8 @@ require (
 	github.com/liamg/waitforhttp v1.0.0
 	github.com/lib/pq v1.9.0
 	github.com/mattes/migrate v3.0.1+incompatible
+	github.com/nats-io/nats-streaming-server v0.19.0 // indirect
+	github.com/nats-io/stan.go v0.7.0
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/phayes/freeport v0.0.0-20171002181615-b8543db493a5
 	github.com/rubenv/sql-migrate v0.0.0-20200616145509-8d140a17f351
@@ -46,7 +47,5 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/ugorji/go v1.1.9 // indirect
 	go.uber.org/goleak v1.1.10
-	golang.org/x/crypto v0.0.0-20201002094018-c90954cbb977 // indirect
-	golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6 // indirect
 	golang.org/x/tools v0.0.0-20201002055958-0d28ed0cbe40 // indirect
 )

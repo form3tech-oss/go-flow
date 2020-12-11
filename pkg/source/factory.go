@@ -34,9 +34,6 @@ func SingleOfInt(value ...int) types.Source {
 func SingleOfString(value ...string) types.Source {
 	return FromIterator(iterator.OfStrings(value...))
 }
-func SingleOfGinContext(value ...*gin.Context) types.Source {
-	return FromIterator(iterator.OfGinContexts(value...))
-}
 
 func OfInts(value ...int) types.Source {
 	return FromIterator(iterator.OfInts(value...))
