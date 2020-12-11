@@ -1,24 +1,20 @@
 package api
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/events"
 	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/flows"
-	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/internalmodels"
-	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/storage"
-	"github.com/giantswarm/retry-go"
-	"github.com/google/uuid"
-
 	"github.com/form3tech-oss/go-flow/internal/sample_app/payment-flow/api/settings"
+	"github.com/giantswarm/retry-go"
 
 	"github.com/form3tech/go-cdc/cdc"
-	"github.com/form3tech/go-cqrs/cqrs"
+	"github.com/form3tech/go-cqrs/v7/cqrs"
 	"github.com/form3tech/go-logger/log"
 	"github.com/jmoiron/sqlx"
 	"github.com/liamg/waitforhttp"
@@ -37,14 +33,21 @@ func Configure() {
 
 	migrateDatabase(db.DB)
 
-	// HACK
-	w := storage.GetPaymentWriter(db)
-	for i := 0; i < 10; i++ {
-		ctx := context.Background()
-		w.Create(&ctx, &internalmodels.Payment{
-			ID: uuid.New(),
-		})
-	}
+	setupRoutes(db)
+}
+
+func setupRoutes(db *sqlx.DB) {
+	router := gin.New()
+	router.Use(gin.Recovery())
+		http.HandleFunc("/", router.ServeHTTP)
+
+
+	router.NoRoute(func(c *gin.Context) {
+		c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
+	})
+
+	v1 := router.Group("/v2")
+	v1.POST("/payments", handlePayment(db))
 }
 
 func getDBConnectionString() connectionString {
@@ -82,7 +85,7 @@ func ConnectToDatabase() *sqlx.DB {
 }
 
 func migrateDatabase(db *sql.DB) {
-	n, err := migrate.Exec(db, "postgres", &migrate.FileMigrationSource{Dir: "internal/sample_app/payment-flow/api/migrations"}, migrate.Up)
+	n, err := migrate.Exec(db, "postgres", &migrate.FileMigrationSource{Dir: "api/migrations"}, migrate.Up)
 	if err != nil {
 		panic(fmt.Sprintf("could not migrate database, error: %v", err))
 	}

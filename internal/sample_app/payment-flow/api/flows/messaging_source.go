@@ -1,7 +1,7 @@
 package flows
 
 import (
-	"github.com/form3tech/go-messaging/messaging"
+	"github.com/form3tech/go-messaging/v5/messaging"
 )
 
 type Source struct {
