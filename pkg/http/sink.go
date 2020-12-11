@@ -14,13 +14,14 @@ type Response struct {
 	Body interface{}
 }
 
-func Sink (c *gin.Context) types.Sink {
-	return sink.FromCollector( & responseCollector{c: c})
+func Sink (c *gin.Context, completed chan struct{}) types.Sink {
+	return sink.FromCollector( & responseCollector{c: c, completed: completed})
 }
 
 
 type responseCollector struct {
 	c *gin.Context
+	completed chan struct{}
 }
 
 func (r responseCollector) Collect(ctx context.Context, element types.Element) {
@@ -30,5 +31,6 @@ func (r responseCollector) Collect(ctx context.Context, element types.Element) {
 	}
 	response := element.Value.(Response)
 	r.c.JSON(response.StatusCode, response.Body)
+	close(r.completed)
 }
 

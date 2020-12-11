@@ -14,13 +14,21 @@ import (
 
 func handlePayment(db *sqlx.DB) func(c *gin.Context) {
 	return func(c *gin.Context) {
+
+		completed := make(chan struct{})
+
 		http.Source(c).
 			Via(flow.Map(ContextToPaymentRequest())).
 			Via(flow.Map(PaymentIsValid())).
 			Via(flow.Map(PaymentPersisted(context.Background(), db))).
 			Via(flow.Map(PaymentPersistedToResponse())).
-			To(http.Sink(c)).
+			To(http.Sink(c, completed)).
 			Run(c)
+
+		select {
+			case <- completed  :
+			case <-c.Done() :
+		}
 	}
 }
 
