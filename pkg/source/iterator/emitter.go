@@ -15,6 +15,7 @@ type emitterIterator struct {
 func (e *emitterIterator) HasNext(ctx context.Context) bool {
 	if !e.hasStarted {
 		e.emitter.Run(ctx)
+		e.hasStarted = true
 	}
 	element, ok := <-e.emitter.Output()
 	if ok {

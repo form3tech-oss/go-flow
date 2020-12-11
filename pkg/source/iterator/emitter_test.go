@@ -8,14 +8,16 @@ import (
 )
 
 type testEmitter struct {
-	output chan types.Element
+	output   chan types.Element
 	iterator types.Iterator
+	t        *testing.T
 }
 
-func createIntEmitterIterator(values ... int) types.Iterator {
+func createIntEmitterIterator(t *testing.T, values ... int) types.Iterator {
 	return FromEmitter(&testEmitter{
 		output:   make(chan types.Element),
 		iterator: OfInts(values ...),
+		t : t,
 	})
 }
 
@@ -25,7 +27,10 @@ func (e *testEmitter) Output() chan types.Element {
 
 func (e *testEmitter) Run(ctx context.Context) {
 	go func() {
+		index :=0
 		for e.iterator.HasNext(ctx) {
+			index ++
+			e.t.Logf("next is %v", index)
 			e.output <- e.iterator.GetNext(ctx)
 		}
 		close(e.output)
@@ -34,7 +39,7 @@ func (e *testEmitter) Run(ctx context.Context) {
 
 func TestEmitterIterator_EmitsAllAsExpected(t *testing.T) {
 	defer goleak.VerifyNone(t)
-	iterator := createIntEmitterIterator(1,2,3)
+	iterator := createIntEmitterIterator(t,1,2,3)
 	expectToMatch(t, iterator, 1,2,3)
 }
 
