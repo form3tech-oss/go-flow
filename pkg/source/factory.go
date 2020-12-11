@@ -4,7 +4,6 @@ import (
 	"github.com/form3tech-oss/go-flow/pkg/option"
 	"github.com/form3tech-oss/go-flow/pkg/source/iterator"
 	"github.com/form3tech-oss/go-flow/pkg/types"
-	"github.com/gin-gonic/gin"
 )
 
 func FromIterator(iterator types.Iterator) types.Source {
@@ -37,4 +36,8 @@ func SingleOfString(value ...string) types.Source {
 }
 func SingleOfGinContext(value ...*gin.Context) types.Source {
 	return FromIterator(iterator.OfGinContexts(value...))
+}
+
+func OfInts(value ...int) types.Source {
+	return FromIterator(iterator.OfInts(value...))
 }
