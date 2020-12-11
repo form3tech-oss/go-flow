@@ -27,8 +27,8 @@ func (t *testStanCollector) Collect(ctx context.Context, element types.Element) 
 		return
 	}
 
-	err := t.conn.Publish("stan_subject", []byte(strconv.Itoa(element.Value.(int))))
-	if err != nil{
+	err := t.conn.Publish(t.subject, []byte(strconv.Itoa(element.Value.(int))))
+	if err != nil {
 		t.t.Fatal(err)
 	}
 
@@ -38,24 +38,22 @@ func (t *testStanCollector) Collect(ctx context.Context, element types.Element) 
 }
 
 func newPublishSink(t *testing.T, conn stan.Conn, subject string, lastValue int, complete chan struct{}) types.Sink {
-	return sink.FromCollector(& testStanCollector{
-		t:       t,
-		conn:    conn,
-		subject: subject,
-		lastValue : lastValue,
-		complete : complete,
+	return sink.FromCollector(&testStanCollector{
+		t:         t,
+		conn:      conn,
+		subject:   subject,
+		lastValue: lastValue,
+		complete:  complete,
 	})
 }
 
-
-func getStanConnection(t * testing.T) stan.Conn {
+func getStanConnection(t *testing.T) stan.Conn {
 	sc, err := stan.Connect("nats-streaming", "stan_streaming_publisher", stan.NatsURL(stan.DefaultNatsURL))
 	if err != nil {
 		t.Fatal(err)
 	}
 	return sc
 }
-
 
 func TestStream(t *testing.T) {
 
@@ -68,24 +66,24 @@ func TestStream(t *testing.T) {
 	subscriptionOptions := getSubscriptionOptions()
 
 	subject := uuid.New().String()
-
+	ctx, cncl := context.WithCancel(context.Background())
 	complete := make(chan struct{})
 	// Publishing
-	source.OfInts(1,2,3,4,5,6,7,8,9,10).To(newPublishSink(t, sc, subject, 10, complete)).Run(context.Background())
-	 <- complete
-
+	source.OfInts(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).To(newPublishSink(t, sc, subject, 10, complete)).Run(ctx)
+	<-complete
 
 	sourceUnderTest := Source(sc, "stan_streaming_test", subject, subscriptionOptions).Via(flow.Map(mapBytesToInts(t)))
 	sourceUnderTest.To(probe)
 
 	// Act
-	sourceUnderTest.Run(context.Background())
+	sourceUnderTest.Run(ctx)
 
 	// Assert
-	probe.Request(10, 20*time.Second)
+	probe.Request(10, 100*time.Second)
 
+	cncl()
 	probe.Expect(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-	//probe.ExpectComplete()
+	probe.ExpectComplete()
 }
 
 func mapBytesToInts(t *testing.T) flow.Mapper {
@@ -102,8 +100,8 @@ func getSubscriptionOptions() []stan.SubscriptionOption {
 	subscriptionOptions := []stan.SubscriptionOption{
 		stan.SetManualAckMode(),
 		stan.DurableName("stan_streaming_test"),
-		stan.StartWithLastReceived(),
 		stan.MaxInflight(1),
+		stan.DeliverAllAvailable(),
 	}
 	return subscriptionOptions
 }
