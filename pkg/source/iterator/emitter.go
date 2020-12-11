@@ -27,5 +27,3 @@ func (e *emitterIterator) HasNext(ctx context.Context) bool {
 func (e *emitterIterator) GetNext(ctx context.Context) types.Element {
 	return e.current
 }
-
-

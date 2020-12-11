@@ -21,7 +21,6 @@ func FromEmitter(emitter types.Emitter) types.Source {
 	})
 }
 
-
 func Range(start int, end int, options ...option.Option) types.Source {
 	return FromIterator(&rangeIterator{
 		start:   start,

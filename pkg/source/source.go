@@ -2,6 +2,7 @@ package source
 
 import (
 	"context"
+
 	"github.com/form3tech-oss/go-flow/pkg/types"
 )
 
@@ -68,4 +69,3 @@ func (s *source) closeOutputs() {
 		close(s.diversion.Input())
 	}
 }
-

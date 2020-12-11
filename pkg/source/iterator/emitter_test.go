@@ -2,9 +2,10 @@ package iterator
 
 import (
 	"context"
+	"testing"
+
 	"github.com/form3tech-oss/go-flow/pkg/types"
 	"go.uber.org/goleak"
-	"testing"
 )
 
 type testEmitter struct {
@@ -13,11 +14,11 @@ type testEmitter struct {
 	t        *testing.T
 }
 
-func createIntEmitterIterator(t *testing.T, values ... int) types.Iterator {
+func createIntEmitterIterator(t *testing.T, values ...int) types.Iterator {
 	return FromEmitter(&testEmitter{
 		output:   make(chan types.Element),
-		iterator: OfInts(values ...),
-		t : t,
+		iterator: OfInts(values...),
+		t:        t,
 	})
 }
 
@@ -27,9 +28,9 @@ func (e *testEmitter) Output() chan types.Element {
 
 func (e *testEmitter) Run(ctx context.Context) {
 	go func() {
-		index :=0
+		index := 0
 		for e.iterator.HasNext(ctx) {
-			index ++
+			index++
 			e.t.Logf("next is %v", index)
 			e.output <- e.iterator.GetNext(ctx)
 		}
@@ -39,7 +40,6 @@ func (e *testEmitter) Run(ctx context.Context) {
 
 func TestEmitterIterator_EmitsAllAsExpected(t *testing.T) {
 	defer goleak.VerifyNone(t)
-	iterator := createIntEmitterIterator(t,1,2,3)
-	expectToMatch(t, iterator, 1,2,3)
+	iterator := createIntEmitterIterator(t, 1, 2, 3)
+	expectToMatch(t, iterator, 1, 2, 3)
 }
-

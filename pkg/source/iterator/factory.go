@@ -2,22 +2,22 @@ package iterator
 
 import "github.com/form3tech-oss/go-flow/pkg/types"
 
-func OfStrings(value ... string) types.Iterator {
-	return ofAny(stringsToAny(value ...))
+func OfStrings(value ...string) types.Iterator {
+	return ofAny(stringsToAny(value...))
 }
 
 func OfInts(value ...int) types.Iterator {
-	return ofAny(intsToAny(value ...))
+	return ofAny(intsToAny(value...))
 }
 
-func FromEmitter( emitter types.Emitter ) types.Iterator {
+func FromEmitter(emitter types.Emitter) types.Iterator {
 	return &emitterIterator{
 		hasStarted: false,
 		emitter:    emitter,
 	}
 }
 
-func stringsToAny(in ... string) []interface{} {
+func stringsToAny(in ...string) []interface{} {
 	out := make([]interface{}, len(in))
 	for i := range in {
 		out[i] = in[i]
@@ -25,11 +25,10 @@ func stringsToAny(in ... string) []interface{} {
 	return out
 }
 
-func intsToAny(in ... int) []interface{} {
+func intsToAny(in ...int) []interface{} {
 	out := make([]interface{}, len(in))
 	for i := range in {
 		out[i] = in[i]
 	}
 	return out
 }
-

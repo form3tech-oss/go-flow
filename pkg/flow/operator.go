@@ -21,7 +21,6 @@ type operatorFlow struct {
 	alsoTo    types.Sink
 }
 
-
 func (o *operatorFlow) AlsoTo(sink types.Sink) types.Source {
 	o.alsoTo = sink
 	return o
